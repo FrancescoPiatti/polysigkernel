@@ -37,7 +37,7 @@ classifiers = ["Intended Audience :: Developers",
 
 python_requires = "~=3.12"
 
-install_requires = ["jax >= 0.24.23"]
+install_requires = ["jax >= 0.4.23"]
 
 
 setuptools.setup(name=name,
