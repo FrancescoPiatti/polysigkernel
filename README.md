@@ -1,6 +1,6 @@
 <h1 align='center'>Polynomial-based schems for Signature Kernels</h1>
 
-Sigkerax is a [JAX](https://github.com/google/jax) library for [signature kernels](https://arxiv.org/abs/2502.08470).
+Polysigkernel is a [JAX](https://github.com/google/jax) library for [signature kernels](https://arxiv.org/abs/2502.08470).
 
 This package is inspired by the [sigkerax](https://github.com/crispitagorico/sigkerax) package by Cristopher Salvi.
 
