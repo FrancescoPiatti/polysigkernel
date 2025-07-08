@@ -6,6 +6,7 @@ from .monomial_approximation_solver import MonomialApproximationSolver
 from .monomial_interpolation_solver import MonomialInterpolationSolver
 from .utils import add_time_fn, interpolate_fn
 from .config import _SOLVERS, _KERNELS, _INTERPOLATIONS
+from .checks import _check_positive_integer, _check_positive_value
 
 
 class SigKernel:
@@ -27,6 +28,10 @@ class SigKernel:
                  add_time : bool = False,
                  interpolation : str = "linear",
                  multi_gpu : bool = False):
+        
+        _check_positive_integer(order, "order")
+        _check_positive_integer(refinement_factor, "refinement_factor")
+        _check_positive_value(scales[0], "scales[0]")
         
         if static_kernel not in _KERNELS:
             raise ValueError("Static kernel not implemented.")
@@ -84,9 +89,12 @@ class SigKernel:
             jax.numpy.ndarray: Kernel matrix of shape (batch_X, batch_Y).
         """
         
-        # Refine X and Y via interpolation
-        X = interpolate_fn(X, t_min=self.s0, t_max=self.S, refinement_factor=self.refinement_factor, kind=self.interpolation)
-        Y = interpolate_fn(Y, t_min=self.t0, t_max=self.T, refinement_factor=self.refinement_factor, kind=self.interpolation)
+        if self.refinement_factor > 1:
+            # Refine X and Y via interpolation
+            X = interpolate_fn(X, t_min=self.s0, t_max=self.S, refinement_factor=self.refinement_factor, 
+                               kind=self.interpolation)
+            Y = interpolate_fn(Y, t_min=self.t0, t_max=self.T, refinement_factor=self.refinement_factor, 
+                               kind=self.interpolation)
 
         # Optionally add time as an extra channel
         if self.add_time:

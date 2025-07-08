@@ -20,3 +20,11 @@ def interpolate_fn(X: jnp.ndarray, t_min: float, t_max: float, refinement_factor
 def add_time_fn(X: jnp.ndarray, t_min: float, t_max: float) -> jnp.ndarray:
     grid = jnp.linspace(t_min, t_max, X.shape[1], dtype=X.dtype)
     return jnp.concatenate([jnp.tile(jnp.expand_dims(grid, axis=[0, 2]), (X.shape[0], 1, 1)), X], axis=2)
+
+def _check_positive_integer(value: int, name: str):
+    if not isinstance(value, int) or value <= 0:
+        raise ValueError(f"{name} must be a positive integer, got {value}.")
+    
+def _check_positive_value(value: float, name: str):
+    if value <= 0:
+        raise ValueError(f"{name} must be a positive, got {value}.")
