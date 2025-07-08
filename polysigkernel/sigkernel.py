@@ -5,8 +5,8 @@ from functools import partial
 from .monomial_approximation_solver import MonomialApproximationSolver
 from .monomial_interpolation_solver import MonomialInterpolationSolver
 from .utils import add_time_fn, interpolate_fn
+from .utils import _check_positive_integer, _check_positive_value
 from .config import _SOLVERS, _KERNELS, _INTERPOLATIONS
-from .checks import _check_positive_integer, _check_positive_value
 
 
 class SigKernel:
