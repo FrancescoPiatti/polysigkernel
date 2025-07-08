@@ -1,9 +1,8 @@
 import jax
 import jax.numpy as jnp
 
-from sigker.sigkernel import SigKernel as SigKernel_polynomial
+from polysigkernel.sigkernel import SigKernel as SigKernel_polynomial
 from sigkerax.sigkernel import SigKernel as SigKernel_sigkerax
-# import kiraly and oberhauser kernel
 
 import pandas as pd
 from tqdm import tqdm
@@ -11,12 +10,9 @@ import argparse
 import timeit
 
 
-# MENTION IN PAPER THE DTYPES USED FOR CPU AND GPU
-
-
 if __name__ == '__main__':
 
-    #  change arg parser 
+    # Argument parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--filename', type=str, default='time_results', help='Name of the file to save the results.')
     

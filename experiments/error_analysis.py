@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 
 import signax
-from polysigker.sigkernel import SigKernel as SigKernel_polynomial
+from polysigkernel.sigkernel import SigKernel as SigKernel_polynomial
 from sigkerax.sigkernel import SigKernel as SigKernel_sigkerax
 
 import pandas as pd
