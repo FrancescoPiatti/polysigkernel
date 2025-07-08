@@ -35,7 +35,7 @@ classifiers = ["Intended Audience :: Developers",
                "Topic :: Scientific/Engineering :: Information Analysis",
                "Topic :: Scientific/Engineering :: Mathematics"]
 
-python_requires = "~=3.12"
+python_requires = ">=3.10"
 
 install_requires = ["jax >= 0.4.23"]
 
