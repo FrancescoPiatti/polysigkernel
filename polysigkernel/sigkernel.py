@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
 from functools import partial
+from typing import Optional
 
 from .monomial_approximation_solver import MonomialApproximationSolver
 from .monomial_interpolation_solver import MonomialInterpolationSolver
@@ -20,7 +21,7 @@ class SigKernel:
                  static_kernel: str = 'linear',
                  solver : str = 'monomial_approx', 
                  refinement_factor : int = 1,
-                 scales: jnp.ndarray = jnp.array([1e0]),
+                 scale : float = 1.,
                  s0 : float = 0., 
                  t0 : float = 0., 
                  S : float = 1., 
@@ -31,7 +32,7 @@ class SigKernel:
         
         _check_positive_integer(order, "order")
         _check_positive_integer(refinement_factor, "refinement_factor")
-        _check_positive_value(scales[0], "scales[0]")
+        _check_positive_value(scale, "scale")
         
         if static_kernel not in _KERNELS:
             raise ValueError("Static kernel not implemented.")
@@ -51,11 +52,9 @@ class SigKernel:
         self.order = order
         self.refinement_factor = refinement_factor
         self.interpolation = interpolation
-        self.scales = scales
         self.multi_gpu = multi_gpu
 
-        # LEGACY - TO CHANGE
-        self.scale = self.scales[0] 
+        self.scale = scale
 
         self.add_time = add_time
         self.s0 = s0
@@ -68,7 +67,8 @@ class SigKernel:
     def kernel_matrix(self, 
                       X: jnp.ndarray, 
                       Y: jnp.ndarray, 
-                      max_batch : int = None,
+                      scale : Optional[float] = None,
+                      max_batch : Optional[int] = None,
                       sym : bool = False) -> jnp.ndarray:
         """
         Compute the signature kernel matrix between sets of paths X and Y.
@@ -95,6 +95,11 @@ class SigKernel:
                                kind=self.interpolation)
             Y = interpolate_fn(Y, t_min=self.t0, t_max=self.T, refinement_factor=self.refinement_factor, 
                                kind=self.interpolation)
+            
+        if scale is None:
+            scale = self.scale
+        else:
+            _check_positive_value(scale)
 
         # Optionally add time as an extra channel
         if self.add_time:
@@ -105,7 +110,7 @@ class SigKernel:
         
         # If no splitting is necessary (or no max_batch is provided):
         if (max_batch is None) or (batch_X <= max_batch and batch_Y <= max_batch):
-            return self.solver(static_ker=self.static_kernel, scale=self.scale, 
+            return self.solver(static_ker=self.static_kernel, scale=scale, 
                                order=self.order).solve(X, Y, sym, self.multi_gpu)
         
         # Case 1: X small enough, Y large
@@ -239,10 +244,10 @@ def hypothesis_test(y_pred : jnp.array,
     solver = kwargs.get('solver', 'monomial_approx')
     refinement_factor = kwargs.get('refinement_factor', 1)
     interpolate_fn = kwargs.get('interpolate_fn', 'linear')
-    scales = kwargs.get('scales', jnp.array([1e0]))
+    scale = kwargs.get('scale', 1.0)
 
     k_sig = SigKernel(order, static_kernel, solver=solver, refinement_factor=refinement_factor,
-                      scales=scales, interpolation=interpolate_fn)
+                      scale=scale, interpolation=interpolate_fn)
 
     m = max(y_pred.shape[0], y_test.shape[0])
 
